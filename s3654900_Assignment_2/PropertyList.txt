@@ -1,0 +1,16 @@
+Sale
+SAL001
+10 Swanston Street
+0
+3000
+true
+ON SALE
+Auction
+AUC001
+20 Swanston Street
+3000
+10000
+true
+ACCEPTING BIDS
+Kyle
+End
