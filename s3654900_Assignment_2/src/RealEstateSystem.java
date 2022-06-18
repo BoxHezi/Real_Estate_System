@@ -299,73 +299,71 @@ public class RealEstateSystem {
             }
         }
         // if sourceFile contain data
-        if (sourceFile != null) {
-            // initialize variables for both sale or auction object
-            String tempID = null;
-            String tempAddress = null;
-            int tempCurrentOffer = 0;
-            int tempReservePrice = 0;
-            boolean tempAcceptingOffers;
-            // initialize one variable to store highest bidder for auction
-            // object
-            String tempHighestBidder = null;
-            while (sourceFile.hasNextLine()) {
-                String propertyType = sourceFile.nextLine();
-                // if propertyType is sale
-                if (propertyType.equals("Sale")) {
-                    /*
-                     * read text line by line and parse those information to
-                     * where they should be
-                     */
-                    tempID = sourceFile.nextLine();
-                    tempAddress = sourceFile.nextLine();
-                    tempCurrentOffer = sourceFile.nextInt();
-                    tempReservePrice = sourceFile.nextInt();
-                    tempAcceptingOffers = sourceFile.nextBoolean();
-                    /*
-                     * skip first line as nextBoolean will not goes to next line
-                     * skip the second line in order to skip property status
-                     */
-                    sourceFile.nextLine();
-                    sourceFile.nextLine();
-                    // create a new Sale object due to what is read from file
-                    Sale savedSale = new Sale(tempID, tempAddress,
-                            tempReservePrice);
-                    // set current offer and acceptingOffers
-                    savedSale.setCurrentOffer(tempCurrentOffer);
-                    savedSale.setAcceptingOffers(tempAcceptingOffers);
-                    // add it to the array list
-                    salesProperty.add(savedSale);
-                }
-                // if it is auction
-                else if (propertyType.equals("Auction")) {
-                    /*
-                     * read text line by line and parse those information to
-                     * where they should be
-                     */
-                    tempID = sourceFile.nextLine();
-                    tempAddress = sourceFile.nextLine();
-                    tempCurrentOffer = sourceFile.nextInt();
-                    tempReservePrice = sourceFile.nextInt();
-                    tempAcceptingOffers = sourceFile.nextBoolean();
-                    /*
-                     * skip first line as nextBoolean will not goes to next line
-                     * skip the second line in order to skip property status
-                     */
-                    sourceFile.nextLine();
-                    sourceFile.nextLine();
-                    tempHighestBidder = sourceFile.nextLine();
-                    // create a new Sale object but with Auction type
-                    Sale savedAuction = new Auction(tempID, tempAddress,
-                            tempReservePrice);
-                    // set currentOffer, acceptingOffers and highestBidder
-                    savedAuction.setCurrentOffer(tempCurrentOffer);
-                    savedAuction.setAcceptingOffers(tempAcceptingOffers);
-                    ((Auction) savedAuction)
-                            .setHighestBidder(tempHighestBidder);
-                    // add the object to the array list
-                    salesProperty.add(savedAuction);
-                }
+        // initialize variables for both sale or auction object
+        String tempID = null;
+        String tempAddress = null;
+        int tempCurrentOffer = 0;
+        int tempReservePrice = 0;
+        boolean tempAcceptingOffers;
+        // initialize one variable to store highest bidder for auction
+        // object
+        String tempHighestBidder = null;
+        while (sourceFile.hasNextLine()) {
+            String propertyType = sourceFile.nextLine();
+            // if propertyType is sale
+            if (propertyType.equals("Sale")) {
+                /*
+                 * read text line by line and parse this information to
+                 * where they should be
+                 */
+                tempID = sourceFile.nextLine();
+                tempAddress = sourceFile.nextLine();
+                tempCurrentOffer = sourceFile.nextInt();
+                tempReservePrice = sourceFile.nextInt();
+                tempAcceptingOffers = sourceFile.nextBoolean();
+                /*
+                 * skip first line as nextBoolean will not go to next line
+                 * skip the second line in order to skip property status
+                 */
+                sourceFile.nextLine();
+                sourceFile.nextLine();
+                // create a new Sale object due to what is read from file
+                Sale savedSale = new Sale(tempID, tempAddress,
+                        tempReservePrice);
+                // set current offer and acceptingOffers
+                savedSale.setCurrentOffer(tempCurrentOffer);
+                savedSale.setAcceptingOffers(tempAcceptingOffers);
+                // add it to the array list
+                salesProperty.add(savedSale);
+            }
+            // if it is auction
+            else if (propertyType.equals("Auction")) {
+                /*
+                 * read text line by line and parse this information to
+                 * where they should be
+                 */
+                tempID = sourceFile.nextLine();
+                tempAddress = sourceFile.nextLine();
+                tempCurrentOffer = sourceFile.nextInt();
+                tempReservePrice = sourceFile.nextInt();
+                tempAcceptingOffers = sourceFile.nextBoolean();
+                /*
+                 * skip first line as nextBoolean will not go to next line
+                 * skip the second line in order to skip property status
+                 */
+                sourceFile.nextLine();
+                sourceFile.nextLine();
+                tempHighestBidder = sourceFile.nextLine();
+                // create a new Sale object but with Auction type
+                Auction savedAuction = new Auction(tempID, tempAddress,
+                        tempReservePrice);
+                // set currentOffer, acceptingOffers and highestBidder
+                savedAuction.setCurrentOffer(tempCurrentOffer);
+                savedAuction.setAcceptingOffers(tempAcceptingOffers);
+                savedAuction
+                        .setHighestBidder(tempHighestBidder);
+                // add the object to the array list
+                salesProperty.add(savedAuction);
             }
         }
         sourceFile.close();
@@ -388,6 +386,7 @@ public class RealEstateSystem {
          */
         for (Sale saleInfo : salesProperty) {
             // when auction object is defined
+            assert targetFile != null;
             if (saleInfo instanceof Auction) {
                 // print Auction to file
                 targetFile.println("Auction");
@@ -406,6 +405,7 @@ public class RealEstateSystem {
                 targetFile.println(((Auction) saleInfo).getHighestBidder());
             }
         }
+        assert targetFile != null;
         targetFile.println("End");
         targetFile.close();
 
@@ -421,6 +421,7 @@ public class RealEstateSystem {
          * as what is written to the main file
          */
         for (Sale saleInfo : salesProperty) {
+            assert backupTarget != null;
             if (saleInfo instanceof Auction) {
                 backupTarget.println("Auction");
             } else {
@@ -437,6 +438,7 @@ public class RealEstateSystem {
                 backupTarget.println(((Auction) saleInfo).getHighestBidder());
             }
         }
+        assert backupTarget != null;
         backupTarget.println("End");
         backupTarget.close();
     }

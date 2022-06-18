@@ -5,7 +5,7 @@ public class Auction extends Sale {
 
     public Auction(String saleID, String propertyAddress, int reservePrice) {
         super(saleID, propertyAddress, reservePrice);
-        highestBidder = "NO BIDS PLACED";
+        this.highestBidder = "NO BIDS PLACED";
     }
 
     public String getPropertyStatus() {
@@ -35,15 +35,15 @@ public class Auction extends Sale {
 //        }
 //    }
 
-    public void setHighestBidder(String newhighestBidder) {
-        highestBidder = newhighestBidder;
+    public void setHighestBidder(String highestBidder) {
+        this.highestBidder = highestBidder;
     }
 
     public String getHighestBidder() {
-        return highestBidder;
+        return this.highestBidder;
     }
 
-    public void makeOffer(int offerPrice) throws OfferException {
+    public void makeOffer(int offerPrice) {
         Scanner userInput = new Scanner(System.in);
         /*
          * try catch block to catch exception property availability will be
@@ -57,7 +57,7 @@ public class Auction extends Sale {
                 super.setCurrentOffer(offerPrice);
                 System.out.println("Offer Accepted!");
                 System.out.printf("%-26s", "Enter your name:");
-                highestBidder = userInput.nextLine();
+                this.highestBidder = userInput.nextLine();
             }
         } catch (OfferException e) {
             System.out.println(e.getMessage());
@@ -66,7 +66,7 @@ public class Auction extends Sale {
 
     public String getSaleDetails() {
         String seventhLine = String.format("%-20s %s\n", "Highest bidder:",
-                highestBidder);
+                this.highestBidder);
         return super.getSaleDetails() + seventhLine;
     }
 }
