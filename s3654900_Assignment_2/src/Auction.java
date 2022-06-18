@@ -26,15 +26,6 @@ public class Auction extends Sale {
         }
     }
 
-//    public boolean closeAuction() {
-//        if (!super.getAcceptingOffers()) {
-//            return false;
-//        } else {
-//            super.setAcceptingOffers(false);
-//            return true;
-//        }
-//    }
-
     public void setHighestBidder(String highestBidder) {
         this.highestBidder = highestBidder;
     }
