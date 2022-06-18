@@ -3,11 +3,11 @@ import java.io.*;
 
 public class RealEstateSystem {
     // Using ArrayList instead of array to declare an unknown sized array
-    private static ArrayList<Sale> salesProperty = new ArrayList<>();
+    private static final ArrayList<Sale> salesProperty = new ArrayList<>();
     private static boolean isRunning = true;
-    private static String fileName = "PropertyList.txt";
-    private static String backupFile = "BackupList.txt";
-    private static String sampleList = "SampleList.txt";
+    private static final String FILENAME = "PropertyList.txt";
+    private static final String BACKUP_FILE = "BackupList.txt";
+    private static final String SAMPLE_LIST = "SampleList.txt";
 
     public static void main(String[] args) throws OfferException {
         // read from text file
@@ -55,8 +55,8 @@ public class RealEstateSystem {
          * Using a loop to check each element in the array to find out if saleID
          * is already exists or not
          */
-        for (int i = 0; i < salesProperty.size(); i++) {
-            if (saleIDInput.equals(salesProperty.get(i).getSaleID())) {
+        for (Sale sale : salesProperty) {
+            if (saleIDInput.equals(sale.getSaleID())) {
                 System.out.println("Error - Sale ID \"" + saleIDInput
                         + "\" already exists in the system!");
                 return;// exit addNewSale method
@@ -101,7 +101,7 @@ public class RealEstateSystem {
         salesProperty.add(newSaleProperty);// add the new property to the
                                            // ArrayList
         System.out
-                .println("New Property Sale added sucessfully for property at "
+                .println("New Property Sale added successfully for property at "
                         + addressInput);
     }
 
@@ -112,28 +112,27 @@ public class RealEstateSystem {
         String saleIDSearch = userInput.nextLine();
         String checkID;
 
-        for (int offerIndex = 0; offerIndex < salesProperty
-                .size(); offerIndex++) {
-            checkID = salesProperty.get(offerIndex).getSaleID();
-            boolean checkAvailability = salesProperty.get(offerIndex)
+        for (Sale sale : salesProperty) {
+            checkID = sale.getSaleID();
+            boolean checkAvailability = sale
                     .getAcceptingOffers();
             // if ID input is valid
             if (checkID.equals(saleIDSearch)) {
                 // check if property still available
-                if (checkAvailability == false) {
+                if (!checkAvailability) {
                     System.out.println("Property is no longer available!");
                     return;
                 }
 
                 System.out.printf("%-25s %s\n", "Enter Sale ID:", saleIDSearch);
                 System.out.printf("%-25s %s\n", "Current offer:",
-                        salesProperty.get(offerIndex).getCurrentOffer());
+                        sale.getCurrentOffer());
                 System.out.printf("%-26s", "Enter new offer:");
 
                 try {
                     // input offer for new property and call makeOffer method
                     newOffer = userInput.nextInt();
-                    salesProperty.get(offerIndex).makeOffer(newOffer);
+                    sale.makeOffer(newOffer);
                     return;
                 } catch (InputMismatchException e) {
                     System.out.println(
@@ -149,8 +148,8 @@ public class RealEstateSystem {
 
     public static void displaySalesSummary() {
         // print all property in the array list
-        for (int i = 0; i < salesProperty.size(); i++) {
-            System.out.print(salesProperty.get(i).getSaleDetails());
+        for (Sale sale : salesProperty) {
+            System.out.print(sale.getSaleDetails());
             System.out.println("-----------------------------------");
         }
     }
@@ -168,8 +167,8 @@ public class RealEstateSystem {
          * Using a loop to check each element in the array to find out if saleID
          * is already exists or not
          */
-        for (int i = 0; i < salesProperty.size(); i++) {
-            if (saleIDInput.equals(salesProperty.get(i).getSaleID())) {
+        for (Sale sale : salesProperty) {
+            if (saleIDInput.equals(sale.getSaleID())) {
                 System.out.println("Error - Sale ID \"" + saleIDInput
                         + "\" already exists in the system!");
                 return;// exit addNewSale method
@@ -225,24 +224,23 @@ public class RealEstateSystem {
         String closeID = userInput.nextLine();
         String checkID;
 
-        for (int i = 0; i < salesProperty.size(); i++) {
-            checkID = salesProperty.get(i).getSaleID();
+        for (Sale sale : salesProperty) {
+            checkID = sale.getSaleID();
             // check if ID input is exist in the array list
             if (checkID.equals(closeID)) {
                 // if the property ID input is a auction property
-                if (salesProperty.get(i) instanceof Auction) {
-                    ((Auction) salesProperty.get(i)).closeAuction();
+                if (sale instanceof Auction) {
+                    ((Auction) sale).closeAuction();
                     System.out.println("Auction \"" + closeID
                             + "\" has ended - property has been: "
-                            + salesProperty.get(i).getPropertyStatus());
-                    return;
+                            + sale.getPropertyStatus());
                 }
                 // if a sale property is input
-                else if (salesProperty.get(i) instanceof Sale) {
+                else {
                     System.out.println("Error - property sale ID \"" + closeID
                             + "\" is not an auction!");
-                    return;
                 }
+                return;
             }
         }
         System.out.println(
@@ -256,14 +254,14 @@ public class RealEstateSystem {
         Scanner sourceFile = null;
         try {
             // scan file
-            sourceFile = new Scanner(new File(fileName));
+            sourceFile = new Scanner(new File(FILENAME));
             System.out.println("File loaded!");
         } catch (Exception fileNotFound) {
-            System.out.println("File \"" + fileName + "\" not found!");
+            System.out.println("File \"" + FILENAME + "\" not found!");
             System.out.println("Searching backup file");
             try {
                 // search for back up file if the main file is not found
-                sourceFile = new Scanner(new File(backupFile));
+                sourceFile = new Scanner(new File(BACKUP_FILE));
                 System.out.println("Reading data from backup file...");
             } catch (Exception backupNotFound) {
                 /*
@@ -276,20 +274,22 @@ public class RealEstateSystem {
                 try {
                     // convert user input to upper case
                     switch (loadSample.toUpperCase()) {
-                    case "Y":
-                        // read from sample list file
-                        sourceFile = new Scanner(new File(sampleList));
-                        System.out.println("Sample file loaded");
-                        break;
-                    case "N":
-                        System.out.println("Sample will be not loaded");
-                        // exit from this method
-                        return;
-                    default:
-                        System.out.println(
-                                "No such an option. No file will be load!");
-                        // exit from this method
-                        return;
+                        case "Y" -> {
+                            // read from sample list file
+                            sourceFile = new Scanner(new File(SAMPLE_LIST));
+                            System.out.println("Sample file loaded");
+                        }
+                        case "N" -> {
+                            System.out.println("Sample will be not loaded");
+                            // exit from this method
+                            return;
+                        }
+                        default -> {
+                            System.out.println(
+                                    "No such an option. No file will be load!");
+                            // exit from this method
+                            return;
+                        }
                     }
                 } catch (Exception e) {
                     System.out.println("No sample file found!");
@@ -377,7 +377,7 @@ public class RealEstateSystem {
         PrintWriter backupTarget = null;
         try {
             // initialize targetFile
-            targetFile = new PrintWriter(new FileOutputStream(fileName));
+            targetFile = new PrintWriter(new FileOutputStream(FILENAME));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -411,7 +411,7 @@ public class RealEstateSystem {
 
         try {
             // initialize backupTarget
-            backupTarget = new PrintWriter(new FileOutputStream(backupFile));
+            backupTarget = new PrintWriter(new FileOutputStream(BACKUP_FILE));
         } catch (Exception e) {
             e.printStackTrace();
         }

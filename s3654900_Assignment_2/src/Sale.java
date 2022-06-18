@@ -1,10 +1,10 @@
 
 public class Sale {
     // declare variables
-    private String saleID;
-    private String propertyAddress;
+    private final String saleID;
+    private final String propertyAddress;
     private int currentOffer;
-    private int reservePrice;
+    private final int reservePrice;
     private boolean acceptingOffers;
 
     // constructor
@@ -48,7 +48,7 @@ public class Sale {
     public void makeOffer(int offerPrice) throws OfferException {
         /*
          * use try catch block to handle offer exception check availability of
-         * properties will be done in the ReasEstateSystem class
+         * properties will be done in the RealEstateSystem class
          */
         try {
             // when new offer is less than current offer
@@ -61,7 +61,7 @@ public class Sale {
                 setCurrentOffer(offerPrice);
                 throw new OfferException(
                         "Offer accepted - but offer has NOT met reserve price!"
-                                + "\nFuther offer are accepted");
+                                + "\nFurther offer are accepted");
             } else {
                 // call setCurrentOffer method to set offer price
                 setCurrentOffer(offerPrice);
@@ -72,13 +72,12 @@ public class Sale {
             }
         } catch (OfferException e) {
             System.out.println(e.getMessage());
-            return;
         }
     }
 
     // getPropertyStatus method to check the status of the property
     public String getPropertyStatus() {
-        if (acceptingOffers == true) {// if acceptingOffers is true
+        if (acceptingOffers) {// if acceptingOffers is true
             return "ON SALE";
         } else { // if acceptingOffers is false
             return "SOLD";

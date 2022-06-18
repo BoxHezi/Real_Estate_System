@@ -9,7 +9,7 @@ public class Auction extends Sale {
     }
 
     public String getPropertyStatus() {
-        if (super.getAcceptingOffers() == true) {
+        if (super.getAcceptingOffers()) {
             return "ACCEPTING BIDS";
         } else {
             if (super.getCurrentOffer() >= super.getReservePrice()) {
@@ -20,14 +20,20 @@ public class Auction extends Sale {
         }
     }
 
-    public boolean closeAuction() {
-        if (super.getAcceptingOffers() == false) {
-            return false;
-        } else {
+    public void closeAuction() {
+        if (super.getAcceptingOffers()) {
             super.setAcceptingOffers(false);
-            return true;
         }
     }
+
+//    public boolean closeAuction() {
+//        if (!super.getAcceptingOffers()) {
+//            return false;
+//        } else {
+//            super.setAcceptingOffers(false);
+//            return true;
+//        }
+//    }
 
     public void setHighestBidder(String newhighestBidder) {
         highestBidder = newhighestBidder;
