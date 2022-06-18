@@ -3,7 +3,7 @@ import java.io.*;
 
 public class RealEstateSystem {
     // Using ArrayList instead of array to declare an unknown sized array
-    private static final ArrayList<Sale> salesProperty = new ArrayList<>();
+    private static final List<Sale> salesProperty = new ArrayList<>();
     private static boolean isRunning = true;
     private static final String FILENAME = "PropertyList.txt";
     private static final String BACKUP_FILE = "BackupList.txt";
@@ -99,7 +99,7 @@ public class RealEstateSystem {
         Sale newSaleProperty = new Sale(saleIDInput, addressInput,
                 reservePriceInput);
         salesProperty.add(newSaleProperty);// add the new property to the
-                                           // ArrayList
+        // ArrayList
         System.out
                 .println("New Property Sale added successfully for property at "
                         + addressInput);
@@ -248,10 +248,8 @@ public class RealEstateSystem {
     }
 
     public static void readFromFile() {
-        Scanner userInput = new Scanner(System.in);
-        String loadSample = null;
-        // create a scanner
-        Scanner sourceFile = null;
+        String loadSample;
+        Scanner sourceFile;
         try {
             // scan file
             sourceFile = new Scanner(new File(FILENAME));
@@ -268,105 +266,100 @@ public class RealEstateSystem {
                  * tell user that no back up is found and ask if user want a
                  * sample list to be loaded
                  */
+                Scanner userInput = new Scanner(System.in);
                 System.out.println("No back up file found!");
                 System.out.print("Load Sample List?(Y/N)");
                 loadSample = userInput.nextLine();
-                try {
-                    // convert user input to upper case
-                    switch (loadSample.toUpperCase()) {
-                        case "Y" -> {
-                            // read from sample list file
-                            sourceFile = new Scanner(new File(SAMPLE_LIST));
-                            System.out.println("Sample file loaded");
-                        }
-                        case "N" -> {
-                            System.out.println("Sample will be not loaded");
-                            // exit from this method
-                            return;
-                        }
-                        default -> {
-                            System.out.println(
-                                    "No such an option. No file will be load!");
-                            // exit from this method
-                            return;
-                        }
-                    }
-                } catch (Exception e) {
-                    System.out.println("No sample file found!");
-                    // exit from this method
+                sourceFile = loadSampleFile(loadSample);
+                if (sourceFile == null) {
                     return;
+                } else {
+                    System.out.println("Sample file loaded");
                 }
             }
         }
-        // if sourceFile contain data
-        // initialize variables for both sale or auction object
-        String tempID = null;
-        String tempAddress = null;
-        int tempCurrentOffer = 0;
-        int tempReservePrice = 0;
-        boolean tempAcceptingOffers;
-        // initialize one variable to store highest bidder for auction
-        // object
-        String tempHighestBidder = null;
+
+        parseSourceFile(sourceFile);
+        sourceFile.close();
+    }
+
+    public static void parseSourceFile(Scanner sourceFile) {
         while (sourceFile.hasNextLine()) {
             String propertyType = sourceFile.nextLine();
             // if propertyType is sale
             if (propertyType.equals("Sale")) {
-                /*
-                 * read text line by line and parse this information to
-                 * where they should be
-                 */
-                tempID = sourceFile.nextLine();
-                tempAddress = sourceFile.nextLine();
-                tempCurrentOffer = sourceFile.nextInt();
-                tempReservePrice = sourceFile.nextInt();
-                tempAcceptingOffers = sourceFile.nextBoolean();
-                /*
-                 * skip first line as nextBoolean will not go to next line
-                 * skip the second line in order to skip property status
-                 */
-                sourceFile.nextLine();
-                sourceFile.nextLine();
-                // create a new Sale object due to what is read from file
-                Sale savedSale = new Sale(tempID, tempAddress,
-                        tempReservePrice);
-                // set current offer and acceptingOffers
-                savedSale.setCurrentOffer(tempCurrentOffer);
-                savedSale.setAcceptingOffers(tempAcceptingOffers);
-                // add it to the array list
-                salesProperty.add(savedSale);
+                salesProperty.add(generateSaleItem(sourceFile));
             }
             // if it is auction
             else if (propertyType.equals("Auction")) {
-                /*
-                 * read text line by line and parse this information to
-                 * where they should be
-                 */
-                tempID = sourceFile.nextLine();
-                tempAddress = sourceFile.nextLine();
-                tempCurrentOffer = sourceFile.nextInt();
-                tempReservePrice = sourceFile.nextInt();
-                tempAcceptingOffers = sourceFile.nextBoolean();
-                /*
-                 * skip first line as nextBoolean will not go to next line
-                 * skip the second line in order to skip property status
-                 */
-                sourceFile.nextLine();
-                sourceFile.nextLine();
-                tempHighestBidder = sourceFile.nextLine();
-                // create a new Sale object but with Auction type
-                Auction savedAuction = new Auction(tempID, tempAddress,
-                        tempReservePrice);
-                // set currentOffer, acceptingOffers and highestBidder
-                savedAuction.setCurrentOffer(tempCurrentOffer);
-                savedAuction.setAcceptingOffers(tempAcceptingOffers);
-                savedAuction
-                        .setHighestBidder(tempHighestBidder);
-                // add the object to the array list
-                salesProperty.add(savedAuction);
+                salesProperty.add(generateAuctionItem(sourceFile));
             }
         }
-        sourceFile.close();
+    }
+
+    public static Scanner loadSampleFile(String loadSample) {
+        try {
+            // convert user input to upper case
+            switch (loadSample.toUpperCase()) {
+                case "Y" -> {
+                    // read from sample list file
+                    return new Scanner(new File(SAMPLE_LIST));
+                }
+                case "N" -> {
+                    System.out.println("Sample will be not loaded");
+                    return null;
+                }
+                default -> {
+                    System.out.println(
+                            "No such an option. No file will be load!");
+                    return null;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("No sample file found!");
+        }
+        return null;
+    }
+
+    public static Sale generateSaleItem(Scanner sourceFile) {
+        String tempID = sourceFile.nextLine();
+        String tempAddress = sourceFile.nextLine();
+        int tempCurrentOffer = sourceFile.nextInt();
+        int tempReservePrice = sourceFile.nextInt();
+        boolean tempAcceptingOffers = sourceFile.nextBoolean();
+        /*
+         * skip first line as nextBoolean will not go to next line
+         * skip the second line in order to skip property status
+         */
+        sourceFile.nextLine();
+        sourceFile.nextLine();
+
+        Sale savedItem = new Auction(tempID, tempAddress, tempReservePrice);
+        savedItem.setCurrentOffer(tempCurrentOffer);
+        savedItem.setAcceptingOffers(tempAcceptingOffers);
+
+        return savedItem;
+    }
+
+    public static Auction generateAuctionItem(Scanner sourceFile) {
+        String tempID = sourceFile.nextLine();
+        String tempAddress = sourceFile.nextLine();
+        int tempCurrentOffer = sourceFile.nextInt();
+        int tempReservePrice = sourceFile.nextInt();
+        boolean tempAcceptingOffers = sourceFile.nextBoolean();
+        /*
+         * skip first line as nextBoolean will not go to next line
+         * skip the second line in order to skip property status
+         */
+        sourceFile.nextLine();
+        sourceFile.nextLine();
+
+        Auction savedAuction = new Auction(tempID, tempAddress, tempReservePrice);
+        savedAuction.setCurrentOffer(tempCurrentOffer);
+        savedAuction.setAcceptingOffers(tempAcceptingOffers);
+        savedAuction.setHighestBidder(sourceFile.nextLine());
+
+        return savedAuction;
     }
 
     public static void outputToFile() {
