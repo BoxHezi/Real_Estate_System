@@ -70,7 +70,7 @@ public class RealEstateSystem {
             return;
         }
         System.out.print("Enter Reserve Price for new PropertySale:");
-        int reservePriceInput = 0;
+        int reservePriceInput;
         String tempReservePrice = userInput.nextLine();
         // check reserve price is input
         if (tempReservePrice.isEmpty()) {
@@ -183,7 +183,7 @@ public class RealEstateSystem {
             return;
         }
         System.out.print("Enter Reserve Price for new AuctionSale:");
-        int reservePriceInput = 0;
+        int reservePriceInput;
         String tempReservePrice = userInput.nextLine();
         // check reserve price is input
         if (tempReservePrice.isEmpty()) {
